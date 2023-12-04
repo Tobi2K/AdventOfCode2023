@@ -1,11 +1,10 @@
 import sys
 from pathlib import Path
 
-from AdventOfCode2023.utils import get_file_as_lines
-
 path_root = Path(__file__).parents[2]
 sys.path.append(str(path_root))
 
+from AdventOfCode2023.utils import get_file_as_lines  # noqa: E402
 
 def extend_and_get_array(inp):
     char_array = []
