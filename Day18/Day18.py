@@ -1,7 +1,5 @@
 import sys
 from pathlib import Path
-import re
-import numpy as np
 path_root = Path(__file__).parents[2]
 sys.path.append(str(path_root))
 
