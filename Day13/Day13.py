@@ -1,19 +1,11 @@
-import sys
-from pathlib import Path
 import numpy as np
 
-path_root = Path(__file__).parents[2]
-sys.path.append(str(path_root))
-
-from AdventOfCode2023.utils import get_file_as_lines  # noqa: E402
-
-FOLDER = "Day13/"
 
 def get_patterns_and_transpose(inp):
     patterns = []
     patterns_transpose = []
     cur_pat = []
-    
+
     for line in inp:
         if line != "":
             cur_pat.append(list(line))
@@ -23,15 +15,15 @@ def get_patterns_and_transpose(inp):
             cur_pat = []
     patterns.append(cur_pat)
     patterns_transpose.append(np.transpose(cur_pat))
-    
+
     return patterns, patterns_transpose
 
-def first_task(path):
-    inp = get_file_as_lines(path)
+
+def first_task(inp):
     patterns, patterns_transpose = get_patterns_and_transpose(inp)
-    
+
     reflection_summary = 0
-    
+
     for pats, mult in [(patterns, 100), (patterns_transpose, 1)]:
         for pattern in pats:
             # Skip first row/col, as we always compare to previous row/col
@@ -42,29 +34,33 @@ def first_task(path):
                     if check_perfect(pattern, idx):
                         reflection_summary += mult * idx
                         break
-    
+
     return reflection_summary
+
 
 # reflection_idx is the HIGHER index of the two reflected rows
 def check_perfect(rows, reflection_idx):
     delta = 1
     while reflection_idx - 1 - delta >= 0 and reflection_idx + delta < len(rows):
         # Check if arrays are exactly equal, if not, return False
-        if not np.array_equal(rows[reflection_idx - 1 - delta], rows[reflection_idx + delta]):
+        if not np.array_equal(
+            rows[reflection_idx - 1 - delta], rows[reflection_idx + delta]
+        ):
             return False
         delta += 1
     # We reached a border without conflicts --> Perfect reflection
     return True
-    
 
-def second_task(path):
-    inp = get_file_as_lines(path)
+
+def second_task(inp):
     patterns, patterns_transpose = get_patterns_and_transpose(inp)
-    
+
     refl_idxs = [(-1, -1)] * len(patterns)
-    
+
     # Get all original reflection axis ids, so we don't use the same row again
-    for refl_id, (pattern_row, pattern_col) in enumerate(zip(patterns, patterns_transpose)):
+    for refl_id, (pattern_row, pattern_col) in enumerate(
+        zip(patterns, patterns_transpose)
+    ):
         for idx in list(range(1, len(pattern_row))):
             if np.array_equal(pattern_row[idx - 1], pattern_row[idx]):
                 if check_perfect(pattern_row, idx):
@@ -73,21 +69,26 @@ def second_task(path):
             if np.array_equal(pattern_col[idx - 1], pattern_col[idx]):
                 if check_perfect(pattern_col, idx):
                     refl_idxs[refl_id] = (-1, idx)
-    
+
     reflection_summary = 0
-    for pats, tuple_id, multiplicator in [(patterns, 0, 100), (patterns_transpose, 1, 1)]:
+    for pats, tuple_id, multiplicator in [
+        (patterns, 0, 100),
+        (patterns_transpose, 1, 1),
+    ]:
         # Go through pattern array (first non-transposed, i.e., rows, then transposed, i.e., cols)
         for refl_id, pattern in enumerate(pats):
-            # Skip first row/col, as we always compare to previous row/col            
+            # Skip first row/col, as we always compare to previous row/col
             for idx in list(range(1, len(pattern))):
                 # If this is the row/col we reflected on previously, skip it
                 if idx == refl_idxs[refl_id][tuple_id]:
                     continue
                 # Get Boolean array of char matches
-                truthy_arr = np.compare_chararrays(pattern[idx - 1], pattern[idx], "==", True)
+                truthy_arr = np.compare_chararrays(
+                    pattern[idx - 1], pattern[idx], "==", True
+                )
                 # Count how many chars DO NOT match
-                false_count = np.size(truthy_arr) - np.count_nonzero(truthy_arr) 
-                # If 0 or 1 chars don't match, check if we find a perfect match with just one wrong char 
+                false_count = np.size(truthy_arr) - np.count_nonzero(truthy_arr)
+                # If 0 or 1 chars don't match, check if we find a perfect match with just one wrong char
                 if false_count < 2:
                     # All reflections matched, with only one wrong char in total
                     if check_close_perfect(pattern, idx, false_count):
@@ -96,13 +97,16 @@ def second_task(path):
 
     return reflection_summary
 
+
 # reflection_idx is the HIGHER index of the two reflected rows
 # Here we additionally have a `close_rows` count. Allows rows to have one char difference
 def check_close_perfect(rows, reflection_idx, close_rows):
     delta = 1
     while reflection_idx - 1 - delta >= 0 and reflection_idx + delta < len(rows):
-        truthy_arr = np.compare_chararrays(rows[reflection_idx - 1 - delta], rows[reflection_idx + delta], "==", True)
-        false_count = np.size(truthy_arr) - np.count_nonzero(truthy_arr) 
+        truthy_arr = np.compare_chararrays(
+            rows[reflection_idx - 1 - delta], rows[reflection_idx + delta], "==", True
+        )
+        false_count = np.size(truthy_arr) - np.count_nonzero(truthy_arr)
         # If strings match exactly, continue
         if false_count == 0:
             delta += 1
@@ -120,8 +124,9 @@ def check_close_perfect(rows, reflection_idx, close_rows):
     # We reached a border without conflicts --> Perfect reflection
     return True
 
-if __name__ == "__main__":
-    print("First Task, Test Input:\t\t", first_task(FOLDER + "test-input.txt"))
-    print("First Task, Task Input:\t\t", first_task(FOLDER + "input.txt"))
-    print("Second Task, Test Input:\t", second_task(FOLDER + "test-input.txt"))
-    print("Second Task, Task Input:\t", second_task(FOLDER + "input.txt"))
+
+def main(test_inp, task_inp):
+    print("First Task, Test Input:\t\t", first_task(test_inp))
+    print("First Task, Task Input:\t\t", first_task(task_inp))
+    print("Second Task, Test Input:\t", second_task(test_inp))
+    print("Second Task, Task Input:\t", second_task(task_inp))

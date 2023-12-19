@@ -1,19 +1,11 @@
 import re
-import sys
-from pathlib import Path
-
-path_root = Path(__file__).parents[2]
-sys.path.append(str(path_root))
-
-from AdventOfCode2023.utils import get_file_as_lines  # noqa: E402
 
 
-def first_task(path):
+def first_task(inp):
     RED = 12
     GREEN = 13
     BLUE = 14
     id_sum = 0
-    inp = get_file_as_lines(path)
     for line in inp:
         split = line.replace("\n", "").split(":")
         game_id = re.search(r"Game (\d+)", split[0]).group(1)
@@ -36,9 +28,8 @@ def first_task(path):
     return id_sum
 
 
-def second_task(path):
+def second_task(inp):
     power_sum = 0
-    inp = get_file_as_lines(path)
     for line in inp:
         split = line.replace("\n", "").split(":")
         games = split[1].split(";")
@@ -64,8 +55,8 @@ def second_task(path):
     return power_sum
 
 
-if __name__ == "__main__":
-    print(first_task("Day2/test-input.txt"))
-    print(first_task("Day2/input.txt"))
-    print(second_task("Day2/test-input.txt"))
-    print(second_task("Day2/input.txt"))
+def main(test_inp, task_inp):
+    print("First Task, Test Input:\t\t", first_task(test_inp))
+    print("First Task, Task Input:\t\t", first_task(task_inp))
+    print("Second Task, Test Input:\t", second_task(test_inp))
+    print("Second Task, Task Input:\t", second_task(task_inp))

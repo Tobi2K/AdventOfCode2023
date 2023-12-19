@@ -1,29 +1,20 @@
-import sys
 from functools import cache
-from pathlib import Path
 
-path_root = Path(__file__).parents[2]
-sys.path.append(str(path_root))
 
-from AdventOfCode2023.utils import get_file_as_lines  # noqa: E402
-
-FOLDER = "Day12/"
-
-def first_task(path):
-    inp = get_file_as_lines(path)
-    
+def first_task(inp):
     spring_noisy = []
-    spring_pairing =[]
+    spring_pairing = []
     for line in inp:
         line = line.split(" ")
         spring_noisy.append(line[0])
         spring_pairing.append([int(x) for x in line[1].split(",")])
-        
+
     combination_sum = 0
     for noisy_config, grouped_config in zip(spring_noisy, spring_pairing):
         combination_sum += combinations(noisy_config, grouped_config)
-        
+
     return combination_sum
+
 
 def combinations(noisy_config, grouped_config):
     count = 0
@@ -38,28 +29,29 @@ def combinations(noisy_config, grouped_config):
     if len(noisy_config) < grouped_config[0]:
         return 0
     # If we do not have a . in the first part of the config (i.e. only # and ? in the leading section determined by grouped_config[0])
-    if "." not in noisy_config[:grouped_config[0]]:
+    if "." not in noisy_config[: grouped_config[0]]:
         # If we can exactly match our first group on the noisy config (and it only contains # and ?), cut the noisy config by that amount and remove first element of grouped config and call method recursively
         if len(noisy_config) == grouped_config[0]:
-            count += combinations(noisy_config[grouped_config[0] + 1:], grouped_config[1:])
+            count += combinations(
+                noisy_config[grouped_config[0] + 1 :], grouped_config[1:]
+            )
         # If the first spot after we would apply our first group is not a #, we also recursively call
         # If it were a #, then the config would not be valid, because we would be splitting a series of #s
         elif noisy_config[grouped_config[0]] != "#":
-            count += combinations(noisy_config[grouped_config[0] + 1:], grouped_config[1:])
+            count += combinations(
+                noisy_config[grouped_config[0] + 1 :], grouped_config[1:]
+            )
     # If we do not start with a "#", start one spot later
     # With this we simplify removing leading non-#s
     if noisy_config[0] != "#":
         count += combinations(noisy_config[1:], grouped_config)
-    
-    return count
-            
-    
 
-def second_task(path):
-    inp = get_file_as_lines(path)
-    
+    return count
+
+
+def second_task(inp):
     spring_noisy = []
-    spring_pairing =[]
+    spring_pairing = []
     for line in inp:
         line = line.split(" ")
         tmp = tuple([int(x) for x in line[1].split(",")])
@@ -73,8 +65,9 @@ def second_task(path):
     combination_sum = 0
     for config_tuple in zip(spring_noisy, spring_pairing):
         combination_sum += combinations_cached(config_tuple)
-        
+
     return combination_sum
+
 
 # First task runs perfectly without cache, test input for second task as well. Second part, task input takes ages w/o caching (thanks reddit, again, for simple package recommendation)
 # NOTE: We cannot use lists when caching --> Tuple conversion in `second_task`
@@ -93,25 +86,28 @@ def combinations_cached(config_tuple):
     if len(noisy_config) < grouped_config[0]:
         return 0
     # If we do not have a . in the first part of the config (i.e. only # and ? in the leading section determined by grouped_config[0])
-    if "." not in noisy_config[:grouped_config[0]]:
+    if "." not in noisy_config[: grouped_config[0]]:
         # If we can exactly match our first group on the noisy config (and it only contains # and ?), cut the noisy config by that amount and remove first element of grouped config and call method recursively
         if len(noisy_config) == grouped_config[0]:
-            count += combinations_cached((noisy_config[grouped_config[0] + 1:], grouped_config[1:]))
+            count += combinations_cached(
+                (noisy_config[grouped_config[0] + 1 :], grouped_config[1:])
+            )
         # If the first spot after we would apply our first group is not a #, we also recursively call
         # If it were a #, then the config would not be valid, because we would be splitting a series of #s
         elif noisy_config[grouped_config[0]] != "#":
-            count += combinations_cached((noisy_config[grouped_config[0] + 1:], grouped_config[1:]))
+            count += combinations_cached(
+                (noisy_config[grouped_config[0] + 1 :], grouped_config[1:])
+            )
     # If we do not start with a "#", start one spot later
     # With this we simplify removing leading non-#s
     if noisy_config[0] != "#":
         count += combinations_cached((noisy_config[1:], grouped_config))
-    
+
     return count
-            
 
 
-if __name__ == "__main__":
-    print("First Task, Test Input:\t\t", first_task(FOLDER + "test-input.txt"))
-    print("First Task, Task Input:\t\t", first_task(FOLDER + "input.txt"))
-    print("Second Task, Test Input:\t", second_task(FOLDER + "test-input.txt"))
-    print("Second Task, Task Input:\t", second_task(FOLDER + "input.txt"))
+def main(test_inp, task_inp):
+    print("First Task, Test Input:\t\t", first_task(test_inp))
+    print("First Task, Task Input:\t\t", first_task(task_inp))
+    print("Second Task, Test Input:\t", second_task(test_inp))
+    print("Second Task, Task Input:\t", second_task(task_inp))

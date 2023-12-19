@@ -1,13 +1,5 @@
-import sys
 from collections import Counter
-from pathlib import Path
 
-path_root = Path(__file__).parents[2]
-sys.path.append(str(path_root))
-
-from AdventOfCode2023.utils import get_file_as_lines  # noqa: E402
-
-FOLDER = "Day7/"
 
 # Map letters and numbers, so we can simply use sorted()
 def map_letters(string):
@@ -26,8 +18,8 @@ def map_letters(string):
         .replace("2", "M")
     )
 
-def first_task(path):
-    inp = get_file_as_lines(path)
+
+def first_task(inp):
     inp = [(map_letters(x.split(" ")[0]), int(x.split(" ")[1])) for x in inp]
 
     high_card = []
@@ -45,7 +37,7 @@ def first_task(path):
         unique_len = len(sorted(count))
         # Get the amount of the highest card
         _, highest_count = count.most_common(1)[0]
-        
+
         # Must be high card
         if unique_len == 5:
             high_card.append(t)
@@ -75,12 +67,21 @@ def first_task(path):
     # Go through sorted hands and calculate total winnings
     rank = 1
     total_winnings = 0
-    for arr in [high_card, pair, two_pair, three_of_a_kind, full_house, four_of_a_kind, five_of_a_kind]:
+    for arr in [
+        high_card,
+        pair,
+        two_pair,
+        three_of_a_kind,
+        full_house,
+        four_of_a_kind,
+        five_of_a_kind,
+    ]:
         for _, bid in sorted(arr, key=lambda x: x[0], reverse=True):
             total_winnings += rank * bid
             rank += 1
 
     return total_winnings
+
 
 # Map letters and numbers, so we can simply use sorted(), but now map J to lowest value (here N)
 def second_map_letters(string):
@@ -99,8 +100,8 @@ def second_map_letters(string):
         .replace("2", "M")
     )
 
-def second_task(path):
-    inp = get_file_as_lines(path)
+
+def second_task(inp):
     inp = [(second_map_letters(x.split(" ")[0]), int(x.split(" ")[1])) for x in inp]
 
     high_card = []
@@ -128,7 +129,7 @@ def second_task(path):
 
         # Get highest count including jokers
         count_with_joker = highest_count + j_count
-        
+
         # Flip the way of checking
         # Must be five of a kind
         if count_with_joker == 5:
@@ -152,12 +153,19 @@ def second_task(path):
                 two_pair.append(t)
         elif count_with_joker == 1:
             high_card.append(t)
-    
 
     # Go through sorted hands and calculate total winnings
     rank = 1
     total_winnings = 0
-    for arr in [high_card, pair, two_pair, three_of_a_kind, full_house, four_of_a_kind, five_of_a_kind]:
+    for arr in [
+        high_card,
+        pair,
+        two_pair,
+        three_of_a_kind,
+        full_house,
+        four_of_a_kind,
+        five_of_a_kind,
+    ]:
         for _, bid in sorted(arr, key=lambda x: x[0], reverse=True):
             total_winnings += rank * bid
             rank += 1
@@ -165,8 +173,8 @@ def second_task(path):
     return total_winnings
 
 
-if __name__ == "__main__":
-    print("First Task, Test Input:\t\t", first_task(FOLDER + "test-input.txt"))
-    print("First Task, Task Input:\t\t", first_task(FOLDER + "input.txt"))
-    print("Second Task, Test Input:\t", second_task(FOLDER + "test-input.txt"))
-    print("Second Task, Task Input:\t", second_task(FOLDER + "input.txt"))
+def main(test_inp, task_inp):
+    print("First Task, Test Input:\t\t", first_task(test_inp))
+    print("First Task, Task Input:\t\t", first_task(task_inp))
+    print("Second Task, Test Input:\t", second_task(test_inp))
+    print("Second Task, Task Input:\t", second_task(task_inp))

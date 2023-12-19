@@ -1,19 +1,9 @@
-import sys
 import numpy as np
-from pathlib import Path
-
-path_root = Path(__file__).parents[2]
-sys.path.append(str(path_root))
-
-from AdventOfCode2023.utils import get_file_as_lines  # noqa: E402
-
-FOLDER = "Day11/"
 
 
-def expand_universe(path, expansion_factor=1000000):
-    inp = get_file_as_lines(path)
+def expand_universe(inp, expansion_factor=1000000):
     universe = []
-    # Keep track of rows and cols (indices) that have to be expanded 
+    # Keep track of rows and cols (indices) that have to be expanded
     expand_rows = []
     expand_cols = []
     # Find empty rows
@@ -21,7 +11,7 @@ def expand_universe(path, expansion_factor=1000000):
         universe.append(list(line))
         if len(line.replace(".", "")) == 0:
             expand_rows.append(idx)
-    
+
     # Transpose to easily navigate columns and find empty cols
     universe = list(map(list, np.transpose(universe)))
     new_universe = []
@@ -52,13 +42,21 @@ def expand_universe(path, expansion_factor=1000000):
             col_expansion = col_set.intersection(expand_cols)
             expansion_count = len(row_expansion) + len(col_expansion)
             # Calc manhattan distance and add expansion factor (-1, because implicitly each row is added once)
-            distance_sum += abs(x1 - x2) + abs(y1 - y2) + expansion_count * (expansion_factor - 1)
-            
+            distance_sum += (
+                abs(x1 - x2) + abs(y1 - y2) + expansion_count * (expansion_factor - 1)
+            )
+
     return distance_sum
 
 
-if __name__ == "__main__":
-    print("First Task, Test Input:\t\t", expand_universe(FOLDER + "test-input.txt", expansion_factor=2))
-    print("First Task, Task Input:\t\t", expand_universe(FOLDER + "input.txt", expansion_factor=2))
-    print("Second Task, Test Input:\t", expand_universe(FOLDER + "test-input.txt", expansion_factor=1000000))
-    print("Second Task, Task Input:\t", expand_universe(FOLDER + "input.txt", expansion_factor=1000000))
+def main(test_inp, task_inp):
+    print("First Task, Test Input:\t\t", expand_universe(test_inp, expansion_factor=2))
+    print("First Task, Task Input:\t\t", expand_universe(task_inp, expansion_factor=2))
+    print(
+        "Second Task, Test Input:\t",
+        expand_universe(test_inp, expansion_factor=1000000),
+    )
+    print(
+        "Second Task, Task Input:\t",
+        expand_universe(task_inp, expansion_factor=1000000),
+    )

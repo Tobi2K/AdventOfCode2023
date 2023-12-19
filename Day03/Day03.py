@@ -1,11 +1,3 @@
-import sys
-from pathlib import Path
-
-path_root = Path(__file__).parents[2]
-sys.path.append(str(path_root))
-
-from AdventOfCode2023.utils import get_file_as_lines  # noqa: E402
-
 def extend_and_get_array(inp):
     char_array = []
     # Split all chars into a 2D array, but add a line at the top, bottom, left and right so we don't have to check boundary conditions
@@ -19,9 +11,7 @@ def extend_and_get_array(inp):
     return char_array
 
 
-def first_task(path):
-    inp = get_file_as_lines(path)
-
+def first_task(inp):
     char_array = extend_and_get_array(inp)
 
     part_sum = 0
@@ -35,7 +25,6 @@ def first_task(path):
                     is_part = check_for_symbol(char_array, i, j)
             else:
                 if num_string != "" and is_part:
-                    print("Got number", num_string)
                     part_sum += int(num_string)
                     num_string = ""
                     is_part = False
@@ -73,9 +62,7 @@ def check_for_symbol(char_array, row, col):
     return False
 
 
-def second_task(path):
-    inp = get_file_as_lines(path)
-
+def second_task(inp):
     char_array = extend_and_get_array(inp)
     gear_ratio_sum = 0
     for i, line in enumerate(char_array):
@@ -169,8 +156,8 @@ def extract_number(row, col):
     return int(num_string)
 
 
-if __name__ == "__main__":
-    print(first_task("Day3/test-input.txt"))
-    print(first_task("Day3/input.txt"))
-    print(second_task("Day3/test-input.txt"))
-    print(second_task("Day3/input.txt"))
+def main(test_inp, task_inp):
+    print("First Task, Test Input:\t\t", first_task(test_inp))
+    print("First Task, Task Input:\t\t", first_task(task_inp))
+    print("Second Task, Test Input:\t", second_task(test_inp))
+    print("Second Task, Task Input:\t", second_task(task_inp))
